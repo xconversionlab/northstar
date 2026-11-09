@@ -683,7 +683,7 @@ private fun BuddyScreen(store: NorthstarStore) {
                 Text("STARBOY · BY PRITHVI", color = Gold, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
                 Text(reply, color = Soft, fontSize = 14.sp, lineHeight = 22.sp)
                 if (!sending && store.getString(NorthstarStore.KEY_API_URL).isBlank()) {
-                    Text("Offline mode is active. Set your private Grok connection in Settings to enable personalised AI replies. Your xAI key belongs on the server, never inside this APK.", color = Muted, fontSize = 11.sp, lineHeight = 17.sp)
+                    Text("Offline mode is active. Set your private Gemini connection in Settings to enable personalised AI replies. Your Google API key stays on the server, never inside this APK.", color = Muted, fontSize = 11.sp, lineHeight = 17.sp)
                 }
             }
         }
@@ -724,10 +724,10 @@ private fun callCompanion(context: android.content.Context, store: NorthstarStor
     val token = SecretVault(context).read()
     return if (endpoint.isBlank()) {
         when (mode) {
-            "research" -> "I can help shape a good research question and identify what evidence to look for. Add your private Grok connection in Settings to enable live web searching with cited sources."
-            "creator" -> "Let's make this concrete. Start with one real experience, one specific lesson, and one viewer who could benefit. Write a 60-second version before trying to make a perfect video.\n\nTo generate a tailored script with Grok, configure your private server endpoint in Settings."
-            "career" -> "Choose one skill that can create value in the next 30 days. Break it into a small daily practice, one proof-of-work project, and one way to show the result.\n\nConnect your private Grok endpoint in Settings for a personalised plan."
-            else -> "Let's slow this down. Name what is in your control today, what is not, and one action that protects your time and self-respect. You don't need to solve everything in one sitting.\n\nConnect your private Grok endpoint in Settings for an AI conversation."
+            "research" -> "I can help shape a good research question and identify what evidence to look for. Add your private Gemini connection in Settings to enable AI research with live Google News results."
+            "creator" -> "Let's make this concrete. Start with one real experience, one specific lesson, and one viewer who could benefit. Write a 60-second version before trying to make a perfect video.\n\nTo generate a tailored script with Gemini, configure your private server endpoint in Settings."
+            "career" -> "Choose one skill that can create value in the next 30 days. Break it into a small daily practice, one proof-of-work project, and one way to show the result.\n\nConnect your private Gemini endpoint in Settings for a personalised plan."
+            else -> "Let's slow this down. Name what is in your control today, what is not, and one action that protects your time and self-respect. You don't need to solve everything in one sitting.\n\nConnect your private Gemini endpoint in Settings for an AI conversation."
         }
     } else if (!endpoint.startsWith("https://", ignoreCase = true)) {
         "Your private assistant endpoint must use HTTPS. Update it in Settings."
@@ -750,7 +750,7 @@ private fun callCompanion(context: android.content.Context, store: NorthstarStor
             val response = stream.bufferedReader().use { it.readText() }
             connection.disconnect()
             if (response.isBlank()) "The assistant returned an empty reply. Try again." else JSONObject(response).optString("reply", "I couldn't read that response. Please try again.")
-        }.getOrElse { "I couldn't reach your Grok service. Check the server URL and connection, or try again when you're online." }
+        }.getOrElse { "I couldn't reach your Gemini service. Check the server URL and private access token, or try again when you're online." }
     }
 }
 
@@ -788,8 +788,8 @@ private fun SettingsDialog(store: NorthstarStore, onDismiss: () -> Unit) {
                 }
                 Text("Last sync: ${store.lastSync()} · Used today: ${store.bytesUsedToday() / 1024} KB", color = Muted, fontSize = 10.sp)
                 Divider(color = Color(0xFF334154))
-                Text("PRIVATE GROK CONNECTION", color = Gold, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.1.sp)
-                Text("Enter your own deployed HTTPS endpoint and device access token. Your xAI API key stays on the server. Grok research/search usage can incur extra API charges.", color = Muted, fontSize = 10.sp, lineHeight = 15.sp)
+                Text("PRIVATE GEMINI CONNECTION", color = Gold, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.1.sp)
+                Text("Enter your STARBOY HTTPS API endpoint and private device token. Your Gemini API key stays on the server. Research uses Google News RSS; Gemini free-tier quotas apply.", color = Muted, fontSize = 10.sp, lineHeight = 15.sp)
                 OutlinedTextField(value = endpoint, onValueChange = { endpoint = it }, label = { Text("Server URL (https://…/api/companion)") }, singleLine = true, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Gold, unfocusedBorderColor = Color(0xFF3B4858), focusedTextColor = Soft, unfocusedTextColor = Soft))
                 OutlinedTextField(value = token, onValueChange = { token = it }, label = { Text("Private device access token") }, singleLine = true, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Gold, unfocusedBorderColor = Color(0xFF3B4858), focusedTextColor = Soft, unfocusedTextColor = Soft))
             }
