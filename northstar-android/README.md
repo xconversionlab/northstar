@@ -1,6 +1,6 @@
-# Northstar — Personal Life Operating System
+# STARBOY — Your Personal Life Operating System
 
-Northstar is a private, Android-first personal assistant foundation. It combines a calm check-in, a short detachment/reset flow, mixed-topic discovery, an original YouTube Creator Lab, habit tracking and an optional Grok-backed assistant.
+STARBOY is a private, Android-first personal life companion. It combines a calm check-in, a short detachment/reset flow, mixed-topic discovery, an original YouTube Creator Lab, habit tracking and an optional Grok-backed assistant.
 
 ## What works in this foundation
 
@@ -30,37 +30,35 @@ The build environment used to prepare this source does not include the Android S
 4. When the run completes, open the workflow run and download the `northstar-debug-apk` artifact.
 5. Extract the ZIP and install `app-debug.apk` on your Android phone. On first install, Android may ask you to allow installation from the browser/files app.
 
-The workflow uses Java 17, Gradle 8.9, Android platform 35 and produces a **debug APK**. A JUnit test for the progressive Bible reading sequence is included, but has not yet been run in this restricted environment. Before public distribution, create a signed release build, review the privacy/data declarations and test on a physical device.
+The workflow uses Java 17, Gradle 8.9 and Android platform 35. It runs the Bible-plan unit tests and produces `STARBOY-debug.apk`. A JUnit test for the progressive Bible reading sequence is included, but has not yet been run in this restricted environment. Before public distribution, create a signed release build, review the privacy/data declarations and test on a physical device.
 
-## Connect Grok (optional)
+## Connect Gemini (configured backend)
 
-Grok API usage is billed separately by xAI. The app works without a Grok API key; offline fallback prompts remain available. To enable live assistant replies:
+STARBOY uses a private Vercel serverless endpoint that calls the Google Gemini Developer API. The default model is `gemini-3.5-flash-lite`, selected for low-cost text inference. Google currently lists free input/output usage for this model, subject to per-project quotas and access availability. Free-tier prompts may be used by Google to improve its products; avoid sending private journal entries unless you accept the applicable terms.
 
-1. Deploy this repository to Vercel.
-2. In Vercel project environment variables, set:
-   - `XAI_API_KEY` — your secret xAI API key.
-   - `XAI_MODEL` — optional model name; default is `grok-4.7`.
-   - `APP_ACCESS_TOKEN` — a long random secret used only to authorise your own app.
-3. Deploy the Vercel project. The API route is `/api/companion`.
-4. In Northstar **Settings**, enter `https://YOUR-DEPLOYMENT.vercel.app/api/companion` and the matching `APP_ACCESS_TOKEN`.
+The companion API is in `api/companion.ts`; the health check is `api/health.ts`. The Vercel project root is `northstar-android`. The `research` mode uses a limited Google News RSS search and attaches source URLs to the response. It does not use paid Gemini Search grounding.
 
-Never put `XAI_API_KEY` in Android source, `local.properties`, app resources, or the APK. Rotate the device token if it is exposed. For a single-person deployment this token is a basic access gate; before sharing the app with anyone else, add per-user authentication and rate limiting.
+Required Vercel environment variables:
+- `GEMINI_API_KEY` — your Google AI Studio API key, stored only in Vercel.
+- `APP_ACCESS_TOKEN` — the private device token configured for your STARBOY installation.
+- `GEMINI_MODEL` — optional; defaults to `gemini-3.5-flash-lite`.
 
+Never put `GEMINI_API_KEY` in Android source, `local.properties`, app resources, or the APK. Configure the server URL and device token in STARBOY Settings. See `GEMINI_BACKEND_SETUP.md` for the exact deployment and setup instructions.
 ## Current limitations / next build stage
 
 - The RSS searches and category ranking are a working first discovery layer, not a full semantic preference-learning model.
 - There is no cloud sync across devices. Data stays local by design.
 - Reminder timing remains subject to Android battery and idle policies. The wake-up task can request exact-alarm access; the other routine tasks use inexact alarms. Users should test behaviour on their own device and review battery optimisation settings if reminders are delayed.
-- Buddy uses the optional Grok endpoint; the initial discovery fetch itself is RSS-based.
+- Buddy uses the Gemini endpoint when configured; otherwise the app keeps its local/offline guidance. Research mode fetches a small live Google News RSS sample.
 - There is no signed release APK yet.
 
 ## Project structure
 
 ```text
 app/                  Native Kotlin + Jetpack Compose Android app
-api/companion.ts      Vercel serverless proxy to xAI Grok
+api/companion.ts      Vercel serverless proxy to Google Gemini
 .github/workflows/    APK build workflow
-GROK_BUILD_PROMPT.md  Handoff instructions for Grok to continue and verify the build
+GEMINI_BACKEND_SETUP.md  Handoff instructions for Grok to continue and verify the build
 ```
 
 ### Live Grok research
