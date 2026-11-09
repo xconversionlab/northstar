@@ -16,9 +16,14 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 };
 
 function safeTokenMatch(expected: string, received: string): boolean {
-  const a = Buffer.from(expected);
-  const b = Buffer.from(received);
-  return a.length === b.length && timingSafeEqual(a, b);
+  if (expected.length !== received.length) return false;
+  const a = new Uint8Array(expected.length);
+  const b = new Uint8Array(received.length);
+  for (let index = 0; index < expected.length; index += 1) {
+    a[index] = expected.charCodeAt(index);
+    b[index] = received.charCodeAt(index);
+  }
+  return timingSafeEqual(a, b);
 }
 
 function allowRequest(ip: string): boolean {
