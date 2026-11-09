@@ -64,17 +64,21 @@ jobs:
       - name: Build STARBOY debug APK
         run: gradle --no-daemon --stacktrace :app:assembleDebug
 
-      - name: Prepare named APK
+      - name: Prepare complete STARBOY package
         run: |
           mkdir -p release
           test -s app/build/outputs/apk/debug/app-debug.apk
           cp app/build/outputs/apk/debug/app-debug.apk release/STARBOY-debug.apk
-          sha256sum release/STARBOY-debug.apk
+          git archive --format=zip --output=release/STARBOY-source.zip HEAD
+          cp GEMINI_BACKEND_SETUP.md release/
+          cp BUILD_STATUS.md release/
+          cp ../README.md release/STARBOY-README.md
+          sha256sum release/STARBOY-debug.apk release/STARBOY-source.zip
 
-      - name: Upload installable APK
+      - name: Upload complete STARBOY package
         uses: actions/upload-artifact@v4
         with:
-          name: STARBOY-debug-apk
-          path: northstar-android/release/STARBOY-debug.apk
+          name: STARBOY-complete-package
+          path: northstar-android/release/*
           if-no-files-found: error
           retention-days: 14
