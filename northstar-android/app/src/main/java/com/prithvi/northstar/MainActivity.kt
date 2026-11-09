@@ -140,8 +140,8 @@ private fun NorthstarApp() {
             TopAppBar(
                 title = {
                     Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        Text("NORTHSTAR", color = Gold, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 2.sp)
-                        Text("YOUR PERSONAL LIFE SYSTEM", color = Muted, fontSize = 9.sp, letterSpacing = 1.4.sp)
+                        Text("STARBOY", color = Gold, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 2.sp)
+                        Text("A BETTER YOU, ONE DAY AT A TIME. · BY PRITHVI", color = Muted, fontSize = 8.sp, letterSpacing = 0.7.sp)
                     }
                 },
                 actions = {
@@ -373,7 +373,7 @@ private fun DiscoverScreen(
         }
         Spacer(Modifier.height(4.dp))
         if (articles.isEmpty()) {
-            EmptyState("Your discovery shelf is ready", "Tap Search for new discoveries. Northstar will look for creator stories, technology, biographies and fresh ideas.")
+            EmptyState("Your discovery shelf is ready", "Tap Search for new discoveries. STARBOY will look for creator stories, technology, biographies and fresh ideas.")
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(bottom = 16.dp)) {
                 items(rankedArticles, key = { it.id }) { article -> ArticleCard(article, onClick = { onOpen(article.url) }, onFeedback = { helpful -> onFeedback(article.category, helpful); feedbackVersion++ }) }
@@ -493,7 +493,7 @@ private fun CreatorScreen(onAskBuddy: () -> Unit) {
                 Button(onClick = onAskBuddy, colors = ButtonDefaults.buttonColors(containerColor = Gold, contentColor = Ink)) { Text("Build a script with Buddy") }
             }
         }
-        Text("Northstar uses creator work as inspiration for original formats; it does not reproduce another creator's scripts or voice.", color = Muted, fontSize = 10.sp)
+        Text("STARBOY uses creator work as inspiration for original formats; it does not reproduce another creator's scripts or voice.", color = Muted, fontSize = 10.sp)
     }
 }
 
@@ -647,7 +647,7 @@ private fun ProgressScreen(store: NorthstarStore) {
             Surface(color = Color(0xFF332A20), shape = RoundedCornerShape(14.dp)) {
                 Column(Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Notifications are turned off", color = Gold, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                    Text("Allow Northstar notifications in Android Settings so your scheduled reminders can appear.", color = Soft, fontSize = 11.sp, lineHeight = 16.sp)
+                    Text("Allow STARBOY notifications in Android Settings so your scheduled reminders can appear.", color = Soft, fontSize = 11.sp, lineHeight = 16.sp)
                     Button(onClick = {
                         val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                         context.startActivity(intent)
@@ -680,7 +680,7 @@ private fun BuddyScreen(store: NorthstarStore) {
         }
         Surface(color = Panel, shape = RoundedCornerShape(18.dp), modifier = Modifier.weight(1f, fill = true)) {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("NORTHSTAR", color = Gold, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
+                Text("STARBOY · BY PRITHVI", color = Gold, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
                 Text(reply, color = Soft, fontSize = 14.sp, lineHeight = 22.sp)
                 if (!sending && store.getString(NorthstarStore.KEY_API_URL).isBlank()) {
                     Text("Offline mode is active. Set your private Grok connection in Settings to enable personalised AI replies. Your xAI key belongs on the server, never inside this APK.", color = Muted, fontSize = 11.sp, lineHeight = 17.sp)
@@ -766,7 +766,7 @@ private fun SettingsDialog(store: NorthstarStore, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Panel,
-        title = { Text("Northstar settings", color = Soft, fontWeight = FontWeight.SemiBold) },
+        title = { Text("STARBOY settings", color = Soft, fontWeight = FontWeight.SemiBold) },
         text = {
             Column(Modifier.fillMaxWidth().heightIn(max = 520.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("DISCOVERY & MOBILE DATA", color = Gold, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.1.sp)
