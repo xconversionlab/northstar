@@ -47,6 +47,17 @@ jobs:
           gradle --version
           sdkmanager --list_installed
 
+      - name: Set up Node.js for backend validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install backend dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Type-check Gemini backend
+        run: npm run typecheck
+
       - name: Run unit tests
         run: gradle --no-daemon --stacktrace :app:testDebugUnitTest
 
