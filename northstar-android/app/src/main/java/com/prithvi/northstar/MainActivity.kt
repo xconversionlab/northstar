@@ -77,6 +77,7 @@ private val Gold = Color(0xFFD8B978)
 private val Soft = Color(0xFFE9E5DC)
 private val Muted = Color(0xFF9AA5B3)
 private val Green = Color(0xFF8FC6A3)
+private const val DEFAULT_COMPANION_ENDPOINT = "https://starboy-companion-api-xconversionlabs-projects.vercel.app/api/companion"
 
 class MainActivity : ComponentActivity() {
     private val notificationPermissionRequest = registerForActivityResult(
@@ -682,7 +683,7 @@ private fun BuddyScreen(store: NorthstarStore) {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("STARBOY · BY PRITHVI", color = Gold, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.3.sp)
                 Text(reply, color = Soft, fontSize = 14.sp, lineHeight = 22.sp)
-                if (!sending && store.getString(NorthstarStore.KEY_API_URL).isBlank()) {
+                if (!sending && SecretVault(context).read().isBlank()) {
                     Text("Offline mode is active. Set your private Gemini connection in Settings to enable personalised AI replies. Your Google API key stays on the server, never inside this APK.", color = Muted, fontSize = 11.sp, lineHeight = 17.sp)
                 }
             }
@@ -720,7 +721,7 @@ private fun BuddyScreen(store: NorthstarStore) {
 }
 
 private fun callCompanion(context: android.content.Context, store: NorthstarStore, message: String, mode: String): String {
-    val endpoint = store.getString(NorthstarStore.KEY_API_URL).trim()
+    val endpoint = store.getString(NorthstarStore.KEY_API_URL).trim().ifBlank { DEFAULT_COMPANION_ENDPOINT }
     val token = SecretVault(context).read()
     return if (endpoint.isBlank()) {
         when (mode) {
@@ -749,7 +750,7 @@ private fun callCompanion(context: android.content.Context, store: NorthstarStor
             val stream = if (connection.responseCode in 200..299) connection.inputStream else connection.errorStream
             val response = stream.bufferedReader().use { it.readText() }
             connection.disconnect()
-            if (response.isBlank()) "The assistant returned an empty reply. Try again." else JSONObject(response).optString("reply", "I couldn't read that response. Please try again.")
+            if (response.isBlank()) "The assistant returned an empty reply. Try again." else JSONObject(response).let { it.optString("reply").ifBlank { it.optString("error", "I couldn't read that response. Please try again.") } }
         }.getOrElse { "I couldn't reach your Gemini service. Check the server URL and private access token, or try again when you're online." }
     }
 }
@@ -761,7 +762,7 @@ private fun SettingsDialog(store: NorthstarStore, onDismiss: () -> Unit) {
     var allowCellular by remember { mutableStateOf(store.getBoolean(NorthstarStore.KEY_ALLOW_CELLULAR, true)) }
     var limit by remember { mutableIntStateOf(store.getInt(NorthstarStore.KEY_DAILY_LIMIT_MB, 5)) }
     var hours by remember { mutableIntStateOf(store.getInt(NorthstarStore.KEY_REFRESH_HOURS, 12)) }
-    var endpoint by remember { mutableStateOf(store.getString(NorthstarStore.KEY_API_URL)) }
+    var endpoint by remember { mutableStateOf(store.getString(NorthstarStore.KEY_API_URL).ifBlank { DEFAULT_COMPANION_ENDPOINT }) }
     var token by remember { mutableStateOf(vault.read()) }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -789,7 +790,7 @@ private fun SettingsDialog(store: NorthstarStore, onDismiss: () -> Unit) {
                 Text("Last sync: ${store.lastSync()} · Used today: ${store.bytesUsedToday() / 1024} KB", color = Muted, fontSize = 10.sp)
                 Divider(color = Color(0xFF334154))
                 Text("PRIVATE GEMINI CONNECTION", color = Gold, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.1.sp)
-                Text("Enter your STARBOY HTTPS API endpoint and private device token. Your Gemini API key stays on the server. Research uses Google News RSS; Gemini free-tier quotas apply.", color = Muted, fontSize = 10.sp, lineHeight = 15.sp)
+                Text("The STARBOY Gemini server URL is prefilled. Add your private device token below. Your Gemini API key stays on the server; Research uses Google News RSS.", color = Muted, fontSize = 10.sp, lineHeight = 15.sp)
                 OutlinedTextField(value = endpoint, onValueChange = { endpoint = it }, label = { Text("Server URL (https://…/api/companion)") }, singleLine = true, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Gold, unfocusedBorderColor = Color(0xFF3B4858), focusedTextColor = Soft, unfocusedTextColor = Soft))
                 OutlinedTextField(value = token, onValueChange = { token = it }, label = { Text("Private device access token") }, singleLine = true, modifier = Modifier.fillMaxWidth(), colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Gold, unfocusedBorderColor = Color(0xFF3B4858), focusedTextColor = Soft, unfocusedTextColor = Soft))
             }
