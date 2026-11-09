@@ -13,7 +13,7 @@ This is the private server-side AI connection for the STARBOY Android app.
 
 ## Deploy on Vercel
 
-The Vercel project root must be `northstar-android`.
+The deployed Vercel project is `starboy-companion-api` at https://starboy-companion-api.vercel.app. Its project root is `northstar-android`.
 
 Set these server-side environment variables for Production and Preview:
 
@@ -27,8 +27,8 @@ Redeploy after setting the environment variables. The API key must never be stor
 
 Open STARBOY → Settings:
 
-- Server URL: `https://YOUR-VERCEL-PROJECT.vercel.app/api/companion`
-- Private device access token: the exact `APP_ACCESS_TOKEN` value stored in Vercel.
+- Server URL: `https://starboy-companion-api-xconversionlabs-projects.vercel.app/api/companion` (this is prefilled in the APK)
+- Private device access token: the one-time private token supplied with the APK handoff; it must match the `APP_ACCESS_TOKEN` value already stored in Vercel.
 
 Save settings, open Buddy, and send a short test message. Check the backend status at `https://YOUR-VERCEL-PROJECT.vercel.app/api/health`; it reports configuration booleans only and never returns secret values.
 
