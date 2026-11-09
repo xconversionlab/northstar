@@ -1,7 +1,12 @@
-# NORTHSTAR
+# STARBOY
 
-Personal life operating system for routines, emotional reset, discovery, spiritual growth, health, career development and creator practice.
+**A better you, one day at a time. · by Prithvi**
 
-Android application source is in `northstar-android/`.
+Private Android personal life companion: routines and reminders, emotional reset, discovery, Bible reading, health habits, career planning, and an original YouTube Creator Lab.
 
-See `northstar-android/README.md` for setup and build instructions.
+- Native Android project: northstar-android/
+- Gemini backend setup: northstar-android/GEMINI_BACKEND_SETUP.md
+- Android build workflow: .github/workflows/build-starboy-apk.yml
+- Vercel backend root: northstar-android/
+
+The Android package is built with Kotlin, Jetpack Compose and Gradle. The Gemini API key is stored only as a Vercel server-side environment variable; it must never be embedded in the APK.
