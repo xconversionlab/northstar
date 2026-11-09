@@ -1,0 +1,11 @@
+.gradle/
+.idea/
+local.properties
+build/
+**/build/
+*.iml
+.DS_Store
+node_modules/
+.vercel/
+.env
+.env.*
